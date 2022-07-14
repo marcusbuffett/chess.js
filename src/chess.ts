@@ -618,7 +618,31 @@ export class Chess {
     /* do we have an empty castling flag? */
     cflags = cflags || '-'
 
-    const epflags = this._epSquare === EMPTY ? '-' : algebraic(this._epSquare)
+    let fen_ep_square = this._epSquare
+
+    if (true && fen_ep_square !== EMPTY) {
+      let found_ep = false
+      const legal_moves = this._moves({
+        legal: true,
+        piece: 'p',
+      })
+
+      for (const i in legal_moves) {
+        const legal_move = legal_moves[i]
+
+        if (legal_move.flags & BITS.EP_CAPTURE) {
+          found_ep = true
+
+          break
+        }
+      }
+
+      if (!found_ep) {
+        fen_ep_square = EMPTY
+      }
+    }
+
+    var epflags = fen_ep_square === EMPTY ? '-' : algebraic(fen_ep_square)
 
     return [
       fen,
